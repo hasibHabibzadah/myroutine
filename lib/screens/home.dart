@@ -9,31 +9,36 @@ class Home extends StatelessWidget {
 
   Widget build(BuildContext context){
     return  Scaffold(
-      appBar: AppBar(
-        backgroundColor: tdBgColor,
-        title : Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-          Icon(
-              Icons.menu,
-              color: tdBlack,
-              size: 30
-          ),
-          Container(
-            height:40 ,
-            width: 40,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.asset('assets/images/avatar.png'),
-            ),
-          )
-        ],
-        )
-      ),
+      appBar: buildAppBar(),
 
       body: Container(
         child: Text("This is my home screen"),
       ),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      backgroundColor: tdBgColor,
+      elevation: 0,
+      title : Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+        Icon(
+            Icons.menu,
+            color: tdBlack,
+            size: 30
+        ),
+        Container(
+          height:40 ,
+          width: 40,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.asset('assets/images/avatar.png'),
+          ),
+        )
+      ],
+      )
     );
   }
 }
