@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:myroutine/constants/colors.dart';
+import '../model/ToDo.dart';
 import '../widgets/todo_item.dart';
 class Home extends StatelessWidget {
-  const Home({Key? key}) : super (key: key);
+  final todoList = ToDo.todoList();
+  Home({Key? key}) : super (key: key);
+
 
 
   @override
@@ -27,13 +30,10 @@ class Home extends StatelessWidget {
                           fontWeight: FontWeight.w500
                       ),
                     ),
-                  )
-                  ,TodoItem(),
-                  TodoItem(),
-                  TodoItem(),
-                  TodoItem(),
-                  TodoItem(),
-                  TodoItem(),
+                  ),
+                  for(ToDo todoo in todoList)
+                  TodoItem(todo: todoo,),
+
                 ],
               ),
 
@@ -86,7 +86,7 @@ class Home extends StatelessWidget {
           width: 40,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: Image.asset('assets/images/avatar.png'),
+            child: Image.asset('assets/avatar.png'),
           ),
         )
       ],
