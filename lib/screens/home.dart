@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:myroutine/constants/colors.dart';
 import '../model/ToDo.dart';
 import '../widgets/todo_item.dart';
-class Home extends StatelessWidget {
-  final todoList = ToDo.todoList();
+class Home extends StatefulWidget {
+
   Home({Key? key}) : super (key: key);
 
+  @override
+  State<Home> createState() => _HomeState();
+}
 
+class _HomeState extends State<Home> {
+  final todoList = ToDo.todoList();
 
   @override
 
@@ -21,29 +26,86 @@ class Home extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 15, bottom: 20),
-                    child: Text(
-                      'All Routines ',
-                      style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w500
+                  Stack(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 15, bottom: 20),
+                        child: Text(
+                          'All Routines ',
+                          style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w500
+                          ),
+                        ),
                       ),
-                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Row(children: [
+                        Expanded(child: Container(
+                          margin: EdgeInsets.only(
+                            bottom: 20,
+                            right: 20,
+                            left: 20,
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: const [BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0.0, 0.0),
+                              blurRadius: 10.0,
+                              spreadRadius: 0.0,
+
+                            ),],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Add a new todo item',
+                              border: InputBorder.none
+                            ),
+                          ),
+                        ),
+                        ),
+                          Container(
+                                margin: EdgeInsets.only(
+                                bottom: 20, right: 20
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: tdBlue,
+                                minimumSize: Size(60,60),
+                                elevation: 10,
+
+                              ),
+                              onPressed: () {  },
+                              child: Text('+', style: TextStyle(fontSize: 40),),
+                            ),
+                          ),
+                      ],),
+                    )
+                    ],
                   ),
                   for(ToDo todoo in todoList)
-                  TodoItem(todo: todoo,),
-
+                  TodoItem(todo: todoo,
+                    onTodoChnaged: __handleToBeChanged,
+                    onDeleteItem: (){},
+                  ),
                 ],
               ),
-
             )
-
           ],
         ),
       ),
     );
   }
+
+  void __handleToBeChanged(ToDo todo){
+    setState(() {
+    todo.isDone = !todo.isDone;
+    });
+  }
+
 
   Widget searchBox(){
     return Container(
@@ -66,8 +128,6 @@ class Home extends StatelessWidget {
       ),
     );
   }
-
-
 
   AppBar buildAppBar() {
     return AppBar(
