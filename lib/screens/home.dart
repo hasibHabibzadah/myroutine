@@ -1,59 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:myroutine/constants/colors.dart';
-import '../model/ToDo.dart';
-import '../widgets/todo_item.dart';
-class Home extends StatefulWidget {
 
-  const Home({Key? key}) : super (key: key);
+import '../model/ToDo.dart';
+import 'package:myroutine/constants/colors.dart';
+import '../widgets/todo_item.dart';
+
+class Home extends StatefulWidget {
+  Home({Key? key}) : super(key: key);
+
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-
-  final todoList = ToDo.todoList();
-  List<ToDo> _foundTodo = [];
+  final todosList = ToDo.todoList();
+  List<ToDo> _foundToDo = [];
   final _todoController = TextEditingController();
-  @override
 
+  @override
   void initState() {
-    // TODO: implement initState
-    List<ToDo> _foundTodo = todoList;
+    _foundToDo = todosList;
     super.initState();
   }
-  Widget build(BuildContext context){
-    return  Scaffold(
-      appBar: buildAppBar(),
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: tdBGColor,
+      appBar: _buildAppBar(),
       body: Stack(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 15),
+            padding: EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 15,
+            ),
             child: Column(
               children: [
-               searchBox(),
+                searchBox(),
                 Expanded(
                   child: ListView(
                     children: [
-                      Stack(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(top: 15, bottom: 20),
-                            child: Text(
-                              'All Routines ',
-                              style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w500
-                              ),
-                            ),
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 50,
+                          bottom: 20,
+                        ),
+                        child: Text(
+                          'All Routines',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w500,
                           ),
-
-                        ],
+                        ),
                       ),
-                      for(ToDo todoo in _foundTodo)
-                      TodoItem(todo: todoo,
-                        onTodoChnaged: __handleToBeChanged,
-                        onDeleteItem: _deleteToDoItem,
-                      ),
+                      for (ToDo todoo in _foundToDo.reversed)
+                        TodoItem(
+                          todo: todoo,
+                          onToDoChanged: __handleToDoChange,
+                          onDeleteItem: _deleteToDoItem,
+                        ),
                     ],
                   ),
                 )
@@ -62,136 +67,153 @@ class _HomeState extends State<Home> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Row(
-              children: [
-                Expanded(child: Container(
-                  margin: const EdgeInsets.only(bottom: 20, right: 20, left: 20),
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  decoration:  BoxDecoration(
+            child: Row(children: [
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(
+                    bottom: 20,
+                    right: 20,
+                    left: 20,
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: const [
                       BoxShadow(
-                          color: Colors.grey,
-                        offset: Offset(0.0,0.0),
+                        color: Colors.grey,
+                        offset: Offset(0.0, 0.0),
                         blurRadius: 10.0,
                         spreadRadius: 0.0,
                       ),
                     ],
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextField(
                     controller: _todoController,
                     decoration: InputDecoration(
-                      hintText: 'Add New Todo Item',
-                      border: InputBorder.none,
-                    ),
+                        hintText: 'Add a new todo item',
+                        border: InputBorder.none),
                   ),
                 ),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  bottom: 20,
+                  right: 20,
                 ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 20, right: 20),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: tdBlue,
-                      minimumSize: Size(60, 60),
-                      elevation: 10
-                    ),
-                    onPressed: () {
-                      _addToDoItem(_todoController.text);
-                    },
-                    child: Text("+",
-                      style: TextStyle(fontSize: 40),
+                child: ElevatedButton(
+                  child: Text(
+                    '+',
+                    style: TextStyle(
+                      fontSize: 40,
                     ),
                   ),
-                )
-              ],
-            ),
-          )
+                  onPressed: () {
+                    _addToDoItem(_todoController.text);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: tdBlue,
+                    minimumSize: Size(60, 60),
+                    elevation: 10,
+                  ),
+                ),
+              ),
+            ]),
+          ),
         ],
       ),
     );
   }
 
-  void __handleToBeChanged(ToDo todo){
+  void __handleToDoChange(ToDo todo) {
     setState(() {
-    todo.isDone = !todo.isDone;
+      todo.isDone = !todo.isDone;
     });
   }
 
-  void _deleteToDoItem(String id){
+  void _deleteToDoItem(String id) {
     setState(() {
-      todoList.removeWhere((element) => element.id == id);
+      todosList.removeWhere((item) => item.id == id);
     });
-
   }
 
-  void _addToDoItem(String toDo){
+  void _addToDoItem(String toDo) {
     setState(() {
-      todoList.add(ToDo(id: DateTime.now().millisecond.toString(), todoText: toDo));
+      todosList.add(ToDo(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        todoText: toDo,
+      ));
     });
-
     _todoController.clear();
   }
 
-  void _runFilter(String enteredKeyboard){
+  void _runFilter(String enteredKeyword) {
     List<ToDo> results = [];
-    if(enteredKeyboard.isEmpty){
-      results = todoList;
-    }else{
-      results = todoList.where((element) => element.todoText!.toLowerCase().contains(enteredKeyboard.toLowerCase())).toList();
+    if (enteredKeyword.isEmpty) {
+      results = todosList;
+    } else {
+      results = todosList
+          .where((item) => item.todoText!
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
+          .toList();
     }
+
     setState(() {
-      _foundTodo = results;
+      _foundToDo = results;
     });
   }
 
-
-  Widget searchBox(){
+  Widget searchBox() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15),
-      decoration : BoxDecoration(
-        color : Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: TextField(
         onChanged: (value) => _runFilter(value),
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           contentPadding: EdgeInsets.all(0),
-          prefixIcon: Icon(Icons.search, color: tdBlack,size: 20,),
-          prefixIconConstraints: BoxConstraints(maxHeight: 20, minWidth: 25),
+          prefixIcon: Icon(
+            Icons.search,
+            color: tdBlack,
+            size: 20,
+          ),
+          prefixIconConstraints: BoxConstraints(
+            maxHeight: 20,
+            minWidth: 25,
+          ),
           border: InputBorder.none,
-          hintText: 'Search Text',
-          hintStyle: TextStyle(color: tdGray),
-
-
+          hintText: 'Search',
+          hintStyle: TextStyle(color: tdGrey),
         ),
       ),
     );
   }
 
-  AppBar buildAppBar() {
+  AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: tdBgColor,
+      backgroundColor: tdBGColor,
       elevation: 0,
-      title : Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
+      title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Icon(
-            Icons.menu,
-            color: tdBlack,
-            size: 30
+          Icons.menu,
+          color: tdBlack,
+          size: 30,
         ),
         Container(
-          height:40 ,
+          height: 40,
           width: 40,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.asset('assets/avatar.png'),
           ),
-        )
-      ],
-      )
+        ),
+      ]),
     );
   }
 }
-
